@@ -1,6 +1,6 @@
 +++
 date = '2025-06-08T19:15:09-04:00'
-draft = true
+draft = false
 title = 'Welcome to MERL'
 +++
 
