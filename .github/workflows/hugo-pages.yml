@@ -28,10 +28,11 @@ jobs:
           extended: true
       - name: Build site
         run: hugo --minify -s merl-site -d public
+
       - name: 📦 Upload site artifact        # ★ updated line
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./public
+          path: ./merl-site/public
 
   deploy:
     needs: build
