@@ -1,5 +1,8 @@
 theme = "hugo-narrow"
-Title = "MERL @ Rose-Hulman"
+title = "MERL @ Rose-Hulman"
+baseURL = "https://merl-rose-hulman.github.io/"
+relativeURLs = true
+languageCode = "en-us"
 
 [params]
 
@@ -7,10 +10,10 @@ Title = "MERL @ Rose-Hulman"
   [params.colorScheme.themes]
     [params.colorScheme.themes.default]
       name = "Default"
-      order = "1"
+      order = 1
     [params.colorScheme.themes.claude]
       name = "Claude"
-      order = "2"
+      order = 2
 
   [params.logo]
     image = "images/avatar.jpeg"
@@ -19,7 +22,7 @@ Title = "MERL @ Rose-Hulman"
   [params.site]
     title = "MERL @ Rose-Hulman"
     subtitle = "Multidisciplinary Educational Robotics Lab"
-    keywords = ["robotics", "embedded systems", "Multidisciplinary", "Educational", "Rose-Hulman", "MERL"]
+    keywords = ["robotics", "embedded systems", "multidisciplinary", "educational", "rose-hulman", "merl"]
 
   [params.author]
     name = "MERL Team"
@@ -50,7 +53,6 @@ Title = "MERL @ Rose-Hulman"
 
 
 [menu]
-
   [[menu.main]]
     name = "Home"
     url = "/"
