@@ -1,48 +1,45 @@
 name: Build & Deploy Hugo site to Pages
 on:
   push:
-    branches: [ deployment ]      # only ship when this branch changes
-  workflow_dispatch:              # manual button, handy for hot-fixes
+    branches: [ deployment ]        # publish only from deployment branch
+  workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write            # allow deployment
-  id-token: write         # needed by deploy-pages action
+  pages: write
+  id-token: write
 
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: false
 
 jobs:
-  build:                         # -------- Build job -------
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4      # keeps submodule & depth options
         with:
-          submodules: recursive  # grab your hugo-narrow theme
-          fetch-depth: 0         # GitInfo/Lastmod need full history
-
+          submodules: recursive
+          fetch-depth: 0
       - name: Install Hugo
-        uses: peaceiris/actions-hugo@v3
+        uses: peaceiris/actions-hugo@v3   # unchanged
         with:
-          hugo-version: '0.127.0'   # pin a recent release
-          extended: true            # enables SCSS pipeline
-
+          hugo-version: '0.127.0'
+          extended: true
       - name: Build site
-        run: |
-          hugo --minify -s merl-site -d public   # source is merl-site/
-
-      - uses: actions/upload-pages-artifact@v2   # hand build to Pages
+        run: hugo --minify -s merl-site -d public
+      - name: 📦 Upload site artifact        # ★ updated line
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
 
-  deploy:                       # -------- Deploy job -------
+  deploy:
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
-        id: deploy
+      - name: 🚀 Deploy to GitHub Pages      # ★ updated line
+        id: deployment
         uses: actions/deploy-pages@v4
