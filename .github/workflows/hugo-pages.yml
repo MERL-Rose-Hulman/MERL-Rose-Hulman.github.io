@@ -1,0 +1,48 @@
+name: Build & Deploy Hugo site to Pages
+on:
+  push:
+    branches: [ deployment ]      # only ship when this branch changes
+  workflow_dispatch:              # manual button, handy for hot-fixes
+
+permissions:
+  contents: read
+  pages: write            # allow deployment
+  id-token: write         # needed by deploy-pages action
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:                         # -------- Build job -------
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive  # grab your hugo-narrow theme
+          fetch-depth: 0         # GitInfo/Lastmod need full history
+
+      - name: Install Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.127.0'   # pin a recent release
+          extended: true            # enables SCSS pipeline
+
+      - name: Build site
+        run: |
+          hugo --minify -s merl-site -d public   # source is merl-site/
+
+      - uses: actions/upload-pages-artifact@v2   # hand build to Pages
+        with:
+          path: ./public
+
+  deploy:                       # -------- Deploy job -------
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
