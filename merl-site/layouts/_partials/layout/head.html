@@ -65,9 +65,9 @@
 <script>
   window.HUGO_CONFIG = {
     homeURL: {{ "/" | relLangURL | jsonify }},
-  postsURL: { { "/posts/" | relLangURL | jsonify } },
-  language: { { .Language.Lang | jsonify } },
-  baseURL: { { site.BaseURL | jsonify } }
+    postsURL: {{ "/posts/" | relLangURL | jsonify }},
+    language: {{ .Language.Lang | jsonify }},
+    baseURL: {{ site.BaseURL | jsonify }}
   };
 </script>
 

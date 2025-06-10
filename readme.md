@@ -51,3 +51,18 @@ To improve the typography of the MERL website, we customized fonts using [PaperM
 - **Preserves theme upgradability and performance**
 
  https://github.com/tom2almighty/hugo-narrow
+
+
+ commit and deploy
+
+
+ # on main
+git switch main
+git add # things changed
+git commit -m "" #commit message
+git push
+
+# fast-forward the deployment branch and trigger a release
+git switch deployment
+git merge --ff-only main
+git push
