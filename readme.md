@@ -16,6 +16,7 @@ Welcome to the github homepage repository for the **Multidisciplinary Educationa
   - [📁 Project Structure Overview](#-project-structure-overview)
   - [✍️ Creating and Managing Content](#️-creating-and-managing-content)
     - [🗂️ Adding Sections and Subpages](#️-adding-sections-and-subpages)
+    - [➕ Adding Pages Under Existing Sections (e.g., Projects, About)](#-adding-pages-under-existing-sections-eg-projects-about)
     - [📝 Adding Blog Posts](#-adding-blog-posts)
     - [🔗 Linking Pages](#-linking-pages)
   - [🧩 Custom Shortcodes](#-custom-shortcodes)
@@ -45,7 +46,11 @@ Welcome to the github homepage repository for the **Multidisciplinary Educationa
 
 ---
 
+
 ## ✍️ Creating and Managing Content
+
+> 📌 If you're adding content under sections defined in `[menu]` (like Projects or About), see the guide below on [Adding Pages Under Existing Sections](#-adding-pages-under-existing-sections-eg-projects-about).
+
 
 ### 🗂️ Adding Sections and Subpages
 
@@ -62,7 +67,7 @@ draft: false
 ---
 ```
 
-3. Add new items to the main navigation in `hugo.toml`:
+3. Add new items to the main navigation in `hugo.toml` (if you want the section to appear in the top menu):
 
 ```toml
 [[menu.main]]
@@ -70,6 +75,33 @@ draft: false
   url = "/projects/"
   weight = 2
 ```
+
+---
+
+### ➕ Adding Pages Under Existing Sections (e.g., Projects, About)
+
+If you want to add new content under an existing menu section (like **Projects** or **About**), do the following:
+
+1. Navigate to the corresponding folder under `/content/`, for example:
+
+```
+/content/projects/
+/content/about/
+```
+
+2. Add a new markdown file with front matter:
+
+```markdown
+---
+title: "Your Page Title"
+date: 2025-06-14
+draft: false
+---
+```
+
+3. Hugo will automatically include it as a subpage. You do **not** need to modify the `[menu]` again unless you want the new subpage to appear in the top navigation.
+
+> ✅ These subpages will be listed automatically if the section layout supports it (e.g., via `_index.md` with `.Pages` rendering).
 
 ### 📝 Adding Blog Posts
 
@@ -91,8 +123,6 @@ draft: false
 ```
 
 3. Write content using markdown.
-
-> ✅ Yes, `draft: false` is in the correct place: within the front matter block at the top of each markdown file.
 
 ### 🔗 Linking Pages
 

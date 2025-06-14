@@ -5,7 +5,7 @@ relativeURLs = true
 languageCode = "en-us"
 
 [params]
-
+  enableimgFolderloop = true
   [params.colorScheme]
   [params.colorScheme.themes]
     [params.colorScheme.themes.default]
@@ -64,6 +64,16 @@ languageCode = "en-us"
     weight = 2
 
   [[menu.main]]
+    name = "Posts"
+    url = "/posts/"
+    weight = 3
+
+  [[menu.main]]
+    name = "Gallery"
+    url = "/gallery/"
+    weight = 4
+
+  [[menu.main]]
     name = "About"
     url = "/about/"
-    weight = 3
+    weight = 5
