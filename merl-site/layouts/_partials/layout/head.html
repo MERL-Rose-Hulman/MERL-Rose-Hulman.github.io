@@ -96,7 +96,8 @@
 {{- $searchIndexURL := printf "%sindex.json" $homePermalink -}}
 <script>
   window.HUGO_CONFIG = {
-    searchIndexURL: {{ $searchIndexURL | jsonify }}
+    // ensure plain string literal without nested quotes
+    searchIndexURL: '{{ $searchIndexURL }}'
   };
 </script>
 

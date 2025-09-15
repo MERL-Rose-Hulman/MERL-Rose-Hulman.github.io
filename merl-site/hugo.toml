@@ -2,10 +2,33 @@ theme = "hugo-narrow"
 title = "MERL @ Rose-Hulman"
 baseURL = "https://merl-rose-hulman.github.io/"
 relativeURLs = true
-languageCode = "en-us"
+languageCode = "en"
+
+# Multilingual configuration
+defaultContentLanguage = "en"
+defaultContentLanguageInSubdir = false
+
+[languages]
+  [languages.en]
+    languageName = "English"
+    weight = 1
+    title = "MERL @ Rose-Hulman"
+  [languages.zh-cn]
+    languageName = "简体中文"
+    weight = 2
+    title = "MERL 实验室 @ 罗斯霍曼"
 
 [params]
   enableimgFolderloop = true
+  [params.accessibility]
+    # Toggle the global "Skip to content" link
+    skipLink = true
+  [params.seo]
+    enableOpenGraph = true
+    enableTwitterCard = true
+    enableJsonLd = true
+    # ⚠ 假设：使用头像作为默认社交分享图
+    defaultImage = "/images/avatar.jpeg"
   [params.colorScheme]
   [params.colorScheme.themes]
     [params.colorScheme.themes.default]
@@ -16,12 +39,14 @@ languageCode = "en-us"
       order = 2
 
   [params.logo]
-    image = "images/avatar.jpeg"
+    image = "images/logo.svg"
     link = "/"
 
   [params.site]
     title = "MERL @ Rose-Hulman"
     subtitle = "Multidisciplinary Educational Robotics Lab"
+    # ⚠ 假设：为 SEO 提供站点级描述
+    description = "MERL develops inclusive, open-source educational robotics platforms like LilyBot and IvyBot to make STEM hands-on and accessible."
     keywords = ["robotics", "embedded systems", "multidisciplinary", "educational", "rose-hulman", "merl"]
 
   [params.author]
@@ -54,26 +79,28 @@ languageCode = "en-us"
 
 [menu]
   [[menu.main]]
-    name = "Home"
+    name = "nav.home"
     url = "/"
     weight = 1
 
   [[menu.main]]
-    name = "Projects"
+    name = "nav.projects"
     url = "/projects/"
     weight = 2
 
   [[menu.main]]
-    name = "Posts"
+    name = "nav.posts"
     url = "/posts/"
     weight = 3
 
   [[menu.main]]
-    name = "Gallery"
+    name = "nav.gallery"
     url = "/gallery/"
     weight = 4
 
   [[menu.main]]
-    name = "About"
+    name = "nav.about"
     url = "/about/"
     weight = 5
+  [params.favicon]
+    svg = "/images/logo.svg"
