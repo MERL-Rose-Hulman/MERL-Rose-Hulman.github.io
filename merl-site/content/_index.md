@@ -48,7 +48,7 @@ At \*\*MERL\*\*, we design \*\*inclusive, open-source robotics platforms\*\* tha
 
 
 
-Led by \[\*\*Dr. Carlotta A. Berry\*\*]](https://wordpress.rose-hulman.edu/berry123/), Professor of Electrical and Computer Engineering and co-director of the multidisciplinary robotics program at Rose-Hulman, our lab creates innovative platforms like \*\*Lily∞Bot\*\* and \*\*Ivy∞Bot\*\* that empower students from K–16 and beyond to explore mobile robotics, coding, and human-robot interaction.
+Led by \[\*\*Dr. Carlotta A. Berry\*\*](https://wordpress.rose-hulman.edu/berry123/), Professor of Electrical and Computer Engineering and co-director of the multidisciplinary robotics program at Rose-Hulman, our lab creates innovative platforms like \[\*\*Lily∞Bot\*\*](https://www.noiresteminist.com/robots) and \*\*Ivy∞Bot\*\* that empower students from K–16 and beyond to explore mobile robotics, coding, and human-robot interaction.
 
 
 
