@@ -62,15 +62,15 @@ Introducing Open-Source Hardware Trailblazer - Carlotta Berry {{<youtube PxemxwB
 
 
 
-9/11/22 Video Blog: Lily∞Bot is Alive!
+9/11/22 Video Blog: Lily∞Bot is Alive! {{<youtube 0OHQB\_C9VKQ>}}
 
 
 
-Lily∞Bot Assembly Video
+Lily∞Bot Assembly Video (now obsolete) {{<youtube B1-iCh-nguc>}}
 
-Lily∞Bot Wiring Video
+Lily∞Bot Wiring Video  {{<youtube eEAK9hw5vP4>}}
 
-Lily∞Bot Motion Control Video
+Lily∞Bot Motion Control Video {{<youtube 4qZwOQatqmM>}}
 
 9/25/22 Video Blog: Target Audience for Lily∞Bot
 
