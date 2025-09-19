@@ -30,6 +30,8 @@ Our mission is rooted in the belief that **representation matters** and that **r
 
 Whether you’re an undergraduate engineer, a K–12 teacher, or a curious community builder, **MERL is your space to learn, innovate, and create with robots.**
 
+{{<youtube J8OmKFbVl8E>}}
+
 ---
 
 **Contact us:** [merl.rose.hulman@gmail.com](mailto:merl.rose.hulman@gmail.com)
