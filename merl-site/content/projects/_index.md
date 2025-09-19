@@ -1,14 +1,32 @@
----
-title: "Projects"
-date: 2023-01-01T08:00:00-07:00
-draft: false
-description: "MERL projects: open-source educational robotics platforms like LilyBot and IvyBot, firmware, curriculum, and community resources."
-keywords: ["MERL", "projects", "robotics", "open-source", "education", "LilyBot", "IvyBot"]
-aliases: ["/work/"]
----
++++
+title       = "Projects"
+date        = "2023-01-01T08:00:00-05:00"
+draft       = false
+tags        = ["projects", "robotics", "open-source", "education", "lilybot", "ivybot", "firmware", "curriculum"]
+categories  = ["robotics", "education"]
+description = "MERL projects include open-source educational robotics platforms like LilyBot and IvyBot, plus firmware, curriculum, and community resources."
+images      = ["/images/projects-hero.jpg"]
+slug        = "projects"
+type        = "page"
+aliases     = ["/work/"]
+keywords    = ["MERL", "projects", "robotics", "open-source", "education", "LilyBot", "IvyBot"]
+lastmod     = "2023-01-01T08:00:00-05:00"
 
-## Publications
+[params.og]
+title       = "Projects"
+description = "Explore MERL's open-source robotics projects including LilyBot, IvyBot, firmware, curriculum, and more."
+image       = "static/images/lily.jpg"
++++
 
-- Berry, C., Collins, K. N.F., & Larregola, A. M. (2024). Open-source Robotics for Academics: A Platform that Grows with the User. In Proceedings of the 2024 ASEE Annual Conference & Exposition.
+## Open-Source 3D Printed Modular Educational Robotics
 
-- Berry, C. A., Larregola, A. M., Collins, K., & McGee, J. (2023). Robotics for the Streets: Open-Source Robotics for Academics. In 2023 IEEE Frontiers in Education Conference (FIE), pp. 1-5. IEEE.
+- Lily∞Bot with Micro:Bit
+- Lily∞Bot with Circuit Playground Express
+- Lily∞Bot with Arduino Uno
+- Lily∞Bot with ESP32
+- Lily∞Bot with Raspberry Pi Pico W
+- Lily∞Bot with Raspberry Pi
+- Ivy∞Bot
+- Lily∞Bot Gripper
+- Robot Arm for Computer Vision
+- SAMI Humanoid Robot from Oregon State
