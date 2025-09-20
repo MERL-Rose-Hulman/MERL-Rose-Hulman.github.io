@@ -120,15 +120,117 @@ Prompt END
 - Handles inline merge directives like `[[merge-source: ...]]`.  
 
 ---
+Here’s your text formatted in clean Markdown:
 
-## Linking in the Main README
+# What the prompt does
+- Converts any pasted article (plain text / rough Markdown / HTML) into a Hugo-ready `.md` file.
+- Adds/cleans TOML front matter (`+++ ... +++`), generates a good slug, meta description, and optional Open Graph fields.
+- Parses your inline image-merge directives (filenames you embed in the body) and moves them into `[params.image_merge]`.
 
-In your repo’s root `README.md`, replace the old section with:
+---
 
-```markdown
-## 🤖 Accelerating Content Creation with AI
+# Before you run it
+- Decide your title, tags, categories, cover image (if any), and publish date.
+- If you’ll auto-create a social image from another document, add inline directives (see below).
+- Timezone default is **America/Indiana/Indianapolis (-04:00)**. If you need a different offset, edit the prompt’s rule 7 or include an explicit date.
 
-We encourage contributors to focus on content, using AI tools to streamline formatting.
+---
 
-👉 See the full [Content Formatting Prompt](./content/readme.md) for step-by-step instructions and the ready-to-copy prompt.
-```
+# Basic workflow (3 steps)
+1. Copy the prompt into ChatGPT.  
+2. Paste your `SOURCE_TEXT` (your full article). Put any special hints at the top or bottom.  
+3. The model will return one code block containing the complete `.md` file (front matter + cleaned body). Save it to your Hugo `content/` folder.
+
+---
+
+# Inline directives (cheat sheet)
+
+Put these inside your `SOURCE_TEXT` (each on its own line). The formatter will read them, use them in front matter, then remove them from the body.
+
+- `[[merge-source: <filename.ext>]]`  
+  Example: `[[merge-source: welcome-to-merl.pdf]]`  
+  Sets `[params.image_merge].source`. If no output is given, it defaults to `/images/<slug>-social.png` and also sets that as your cover/OG image.
+
+- `[[merge-output: /images/<file>]]`  
+  Example: `[[merge-output: /images/welcome-cover.png]]`  
+  Sets `[params.image_merge].output`. If no cover image is set yet, this becomes `images[0]` and `[params.og].image`.
+
+- `[[merge-role: cover|og|body|cover,og]]`  
+  Example: `[[merge-role: cover,og]]`  
+  Controls where the merged image is used. If it includes `body`, the page body will include a figure referencing the merged output.
+
+- `[[cover-image: /images/<file>]]`  
+  Example: `[[cover-image: /images/merl-hero.jpg]]`  
+  Forces `images[0]` and `[params.og].image` to this file.
+
+---
+
+# Minimal example input
+
+[[merge-source: welcome-to-merl.pdf]]
+[[merge-output: /images/welcome-to-merl-cover.png]]
+[[merge-role: cover,og]]
+
+Title: Welcome to MERL
+Tags: MERL, robotics, open-source, STEM Education
+Categories: Lab, Education
+Hero: /images/avatar.jpeg
+
+Welcome to the Multidisciplinary Educational Robotics Lab (MERL)
+
+At MERL, we design inclusive, open-source robotics platforms…
+
+**What you’ll get back:**  
+One fenced code block with a complete `.md` file—TOML front matter filled, clean Markdown body, directives removed, and `[params.image_merge]` populated.
+
+---
+
+# Where to save & how to reference
+- **Page file:** `content/welcome-to-merl.md` (or page bundle: `content/welcome-to-merl/index.md`).  
+- **Images:** Use absolute paths (`/images/...`) unless your theme expects bundle-relative paths.  
+- **Type:** Stays `"page"` unless targeting a section with list templates (e.g., `type = "post"`).
+
+---
+
+# Do’s & don’ts
+
+**Do**
+- Keep tags 3–10, lower-case nouns.  
+- Keep categories broad (1–3 items).  
+- Write a 150–160 char meta description (the prompt will create/refine one).  
+- Use meaningful link text (the prompt converts raw URLs).  
+
+**Don’t**
+- Duplicate the H1 in the body if your theme renders `.Title` by default.  
+- Mix YAML/JSON front matter—this prompt is TOML only (`+++`).  
+- Paste multiple articles at once.  
+
+---
+
+# Multilingual tips (if you use i18n)
+- Put language variants under `content/en/...`, `content/zh/...`, etc., or add `lang = "en"` in `[params.og]` if supported.  
+- Use `aliases = ["/old-path/"]` to preserve old URLs when renaming slugs.  
+
+---
+
+# Quick QA checklist
+- Front matter keys exist: `title`, `date`, `draft`, `tags`, `categories`, `description`, `images`, `slug`, `type`.  
+- Description length ~150–160 chars, no emoji.  
+- Slug is kebab-case ASCII only.  
+- `images[0]` and `[params.og].image` point to a real file.  
+- If `merge-role` includes `body`, confirm there’s a figure shortcode at the top.  
+
+---
+
+# Troubleshooting
+- If ChatGPT adds commentary outside the code block, say:  
+  *“Return ONLY the finished .md file inside one code block.”*  
+- If your theme needs a different figure shortcode (e.g., `figurex`), mention it in the source.  
+- If dates are wrong, include a precise ISO timestamp with offset in your `SOURCE_TEXT`.  
+
+---
+
+That’s it—paste the prompt, drop in your article + optional directives, and save the returned code block as your Hugo page.
+
+
+
