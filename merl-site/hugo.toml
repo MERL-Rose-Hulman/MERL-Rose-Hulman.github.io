@@ -19,7 +19,12 @@ defaultContentLanguageInSubdir = false
     title = "MERL 实验室 @ 罗斯霍曼"
 
 [params]
+
+  animated-list = true
   enableimgFolderloop = true
+  pdf = true
+  github-repo = true
+
   [params.accessibility]
     # Toggle the global "Skip to content" link
     skipLink = true
@@ -68,6 +73,11 @@ defaultContentLanguageInSubdir = false
       name = "Instagram"
       icon = "Instagram"
       url = "https://instagram.com/noiresteminist"
+    
+    [[params.author.social]]
+      name = "YouTube"
+      icon = "YouTube"
+      url = "https://www.youtube.com/@carlottaberry"
 
   [params.projects]
     [[params.projects.list]]

@@ -2,6 +2,41 @@
 <html lang="{{ site.LanguageCode }}" data-theme="default">
   <head>
     {{ partial "layout/head.html" . }}
+    <style id="robot-pointer-styles">
+      @media (pointer: fine) {
+        body.robot-pointer-active,
+        body.robot-pointer-active * {
+          cursor: none !important;
+        }
+
+        #robot-pointer {
+          position: fixed;
+          top: 0;
+          left: 0;
+          z-index: 9999;
+          width: 2.5rem;
+          height: 2.5rem;
+          display: grid;
+          place-items: center;
+          font-size: 1.75rem;
+          pointer-events: none;
+          transform: translate(-50%, -50%) scale(0.75);
+          opacity: 0;
+          transition: transform 120ms ease-out, opacity 120ms ease-out;
+          filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+          will-change: transform, opacity;
+        }
+
+        #robot-pointer.pointer-visible {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+
+        #robot-pointer.pointer-clicked {
+          transform: translate(-50%, -50%) scale(0.9);
+        }
+      }
+    </style>
     <script>
       (function() {
         const theme = localStorage.getItem('theme') || 'system';
@@ -43,5 +78,117 @@
     {{ partial "features/katex.html" . }}
     {{ partial "features/mermaid.html" . }}
     {{ partial "ui/search-modal.html" . }}
+    <script>
+      (function () {
+        const pointerMediaQuery = window.matchMedia
+          ? window.matchMedia('(pointer: fine)')
+          : null;
+
+        const initPointer = () => {
+          if (pointerMediaQuery && !pointerMediaQuery.matches) {
+            return;
+          }
+
+          if (document.getElementById('robot-pointer')) {
+            return;
+          }
+
+          const body = document.body;
+          if (!body) {
+            return;
+          }
+
+          const pointer = document.createElement('div');
+          pointer.id = 'robot-pointer';
+          pointer.setAttribute('aria-hidden', 'true');
+          pointer.textContent = '🤖';
+          body.appendChild(pointer);
+          body.classList.add('robot-pointer-active');
+
+          let pointerVisible = false;
+
+          const showPointer = (event) => {
+            pointer.style.left = `${event.clientX}px`;
+            pointer.style.top = `${event.clientY}px`;
+            if (!pointerVisible) {
+              pointer.classList.add('pointer-visible');
+              pointerVisible = true;
+            }
+          };
+
+          const hidePointer = () => {
+            pointer.classList.remove('pointer-visible');
+            pointerVisible = false;
+          };
+
+          const pressPointer = () => {
+            pointer.classList.add('pointer-clicked');
+          };
+
+          const releasePointer = () => {
+            pointer.classList.remove('pointer-clicked');
+          };
+
+          const handlePointerChange = (event) => {
+            if (!event.matches) {
+              destroyPointer();
+            }
+          };
+
+          const destroyPointer = () => {
+            window.removeEventListener('mousemove', showPointer);
+            window.removeEventListener('mouseleave', hidePointer);
+            window.removeEventListener('mousedown', pressPointer);
+            window.removeEventListener('mouseup', releasePointer);
+            window.removeEventListener('blur', hidePointer);
+            if (pointerMediaQuery) {
+              if (pointerMediaQuery.removeEventListener) {
+                pointerMediaQuery.removeEventListener('change', handlePointerChange);
+              } else if (pointerMediaQuery.removeListener) {
+                pointerMediaQuery.removeListener(handlePointerChange);
+              }
+            }
+            pointer.remove();
+            body.classList.remove('robot-pointer-active');
+          };
+
+          window.addEventListener('mousemove', showPointer, { passive: true });
+          window.addEventListener('mouseleave', hidePointer, { passive: true });
+          window.addEventListener('mousedown', pressPointer);
+          window.addEventListener('mouseup', releasePointer);
+          window.addEventListener('blur', hidePointer);
+
+          window.addEventListener(
+            'touchstart',
+            () => {
+              destroyPointer();
+            },
+            { once: true }
+          );
+
+          if (pointerMediaQuery) {
+            if (pointerMediaQuery.addEventListener) {
+              pointerMediaQuery.addEventListener('change', handlePointerChange);
+            } else if (pointerMediaQuery.addListener) {
+              pointerMediaQuery.addListener(handlePointerChange);
+            }
+          }
+        };
+
+        const boot = () => {
+          if (document.body) {
+            initPointer();
+          } else {
+            document.addEventListener('DOMContentLoaded', initPointer, { once: true });
+          }
+        };
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', boot, { once: true });
+        } else {
+          boot();
+        }
+      })();
+    </script>
   </body>
 </html>

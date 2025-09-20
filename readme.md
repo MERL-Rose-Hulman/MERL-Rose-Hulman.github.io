@@ -14,6 +14,7 @@ Welcome to the github homepage repository for the **Multidisciplinary Educationa
 - [🧠 MERL Website (v0.2)](#-merl-website-v02)
   - [📖 Table of Contents](#-table-of-contents)
   - [📁 Project Structure Overview](#-project-structure-overview)
+  - [🤖 Accelerating Content Creation with AI](#-accelerating-content-creation-with-ai)
   - [✍️ Creating and Managing Content](#️-creating-and-managing-content)
     - [🗂️ Adding Sections and Subpages](#️-adding-sections-and-subpages)
     - [➕ Adding Pages Under Existing Sections (e.g., Projects, About)](#-adding-pages-under-existing-sections-eg-projects-about)
@@ -22,11 +23,15 @@ Welcome to the github homepage repository for the **Multidisciplinary Educationa
   - [🧩 Custom Shortcodes](#-custom-shortcodes)
     - [🔄 Loop Carousel](#-loop-carousel)
     - [📂 LoopFolder Carousel](#-loopfolder-carousel)
-  - [🤖 Accelerating Content Creation with AI](#-accelerating-content-creation-with-ai)
+    - [📑 Embedded PDF](#-embedded-pdf)
+    - [✨ Animated List](#-animated-list)
+    - [📦 GitHub Repo Card](#-github-repo-card)
+    - [📜 GitHub README Embed](#-github-readme-embed)
   - [🚀 Deployment Process](#-deployment-process)
   - [🎨 Theme Customization](#-theme-customization)
     - [🔧 General Theme Customization](#-general-theme-customization)
     - [✏️ Fonts Customization](#️-fonts-customization)
+    - [🤖 Robot Pointer Cursor](#-robot-pointer-cursor)
   - [📦 Project Information](#-project-information)
 
 ---
@@ -39,12 +44,22 @@ Welcome to the github homepage repository for the **Multidisciplinary Educationa
 /assets         # CSS, JS, images for processing
 /static         # Raw static files
 /themes         # Git submodule: hugo-narrow theme
-/config.toml    # Hugo configuration
+/hugo.toml    # Hugo configuration
 ```
 
 > **Important**: Ensure each content file includes `draft: false` to appear publicly.
+---
+
+## 🤖 Accelerating Content Creation with AI
+
+
+We encourage contributors to focus on content, using AI tools to streamline formatting.
+
+👉 See the full [Content Formatting Prompt](./content/readme.md) for detailed instructions.
 
 ---
+
+
 
 
 ## ✍️ Creating and Managing Content
@@ -147,7 +162,7 @@ Explicitly specify image paths:
 {{< loop "/img/1.jpg,/img/2.jpg,/img/3.jpg" >}}
 ```
 
-Enable in `config.toml`:
+Enable in `hugo.toml`:
 
 ```toml
 [params]
@@ -162,20 +177,92 @@ Automatically reads images from a specified folder:
 {{< loopFolder "img/gallery" >}}
 ```
 
-Enable in `config.toml`:
+Enable in `hugo.toml`:
 
 ```toml
 [params]
 enableimgFolderloop = true
 ```
 
----
+### 📑 Embedded PDF
 
-## 🤖 Accelerating Content Creation with AI
+Embed a PDF into your page:
+```markdown
+{{< pdf "/pdfs/sample.pdf" >}}
+```
+Enable in hugo.toml:
 
-We encourage contributors to focus on content, using AI tools to streamline formatting. Recommended AI prompt:
+```toml
+[params]
+PDF = true
+```
 
-> “Format this content into a Hugo markdown file, including proper front matter (title, date, tags, draft: false).”
+✨ Notes:  
+- Place your PDF under `static/pdfs/` so it’s served at `/pdfs/sample.pdf`.  
+- you can also use link to an external PDF
+
+### ✨ Animated List
+
+Create a sequentially animated list—great for team bios, milestones, or announcements:
+
+```markdown
+{{< animated-list title="Current Lab Members" subtitle="2024–2025" tagline="Cross-disciplinary engineers advancing open-source robotics" delay="850" >}}
+- **Dr. Carlotta A. Berry** — xxxxxx
+- **Yueqiao Wang*** — Senior Computer Engineering Student @ Rose-Hulman Institute of Technology
+{{< /animated-list >}}
+```
+
+Enable in hugo.toml:
+
+```toml
+[params]
+animated-list = true
+```
+
+**Parameters**  
+- `title`, `subtitle`, `tagline`: Optional headings shown above the list.  
+- `intro`: Optional Markdown paragraph for extra context.  
+- `delay`: Milliseconds between each item appearing (default `900`).
+
+💡 Tip: supply your list as standard Markdown `-` bullets inside the shortcode. The About page now uses this shortcode to highlight the current lab members.
+
+
+⸻
+
+### 📦 GitHub Repo Card
+
+Automatically fetches and displays repo details (stars, forks, issues, description, last update).
+
+{{< github-repo "owner/repo" >}}
+
+Optional branch parameter:
+
+{{< github-repo "owner/repo" branch="main" >}}
+
+Enable in hugo.toml:
+
+```toml
+[params]
+github-repo = true
+```
+Styling can be customized via .gh-card CSS in assets/css/extended/custom.css.
+
+
+
+⸻
+
+### 📜 GitHub README Embed
+
+Fetches and renders a repository’s README (or any Markdown file) directly inside your page.
+
+{{< github-readme "owner/repo" >}}
+
+Optional parameters (branch & file path):
+
+{{< github-readme "owner/repo" branch="main" path="README.md" >}}
+
+No config needed in hugo.toml.
+Ensure raw.githubusercontent.com is allowed in your Hugo security.http config.
 
 ---
 
@@ -230,6 +317,14 @@ We customized fonts using extended CSS:
   --font-mono: "Roboto Mono", monospace;
 }
 ```
+
+### 🤖 Robot Pointer Cursor
+
+We now use an animated robot emoji cursor inspired by the [Magic UI pointer component](https://magicui.design/docs/components/pointer). The effect lives in `merl-site/layouts/baseof.html` where a small inline style block and script add a `🤖` element that tracks the mouse, hides the native cursor, and animates on click.
+
+- **Change the emoji or styling:** Edit the `pointer.textContent = '🤖';` line or the `#robot-pointer` CSS inside the inline `<style id="robot-pointer-styles">` block to match a different look.
+- **Disable the feature:** Remove or comment out the style block/script, or delete the `robot-pointer-active` class helpers in the same file if you want to revert to the system cursor.
+- The script automatically falls back to the default cursor on touch devices or when the browser reports a coarse pointer.
 
 ---
 

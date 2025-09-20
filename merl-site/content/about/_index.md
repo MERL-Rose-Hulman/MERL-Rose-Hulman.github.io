@@ -6,7 +6,8 @@ description: "About MERL: inclusive, open-source robotics education at Rose-Hulm
 keywords: ["MERL", "About", "Robotics", "Education", "Open-source", "Rose-Hulman"]
 ---
 
-## Welcome to MERL
+{{< figurex src="/images/RHIT_MERL_Students_Carlotta_Berry_January_2024-13918.jpg" alt="MERL students with Dr. Berry in January 2024" caption="MERL students with Dr. Carlotta A. Berry (Jan 2024)" link="original" >}}
+
 
 At MERL, we design inclusive, open-source robotics platforms that make engineering education hands-on, affordable, and accessible to everyone.
 
@@ -16,4 +17,15 @@ Our mission is that representation matters and robotics should be for the street
 
 Contact: merl.rose.hulman@gmail.com
 
-{{< figurex src="/images/RHIT_MERL_Students_Carlotta_Berry_January_2024-13918.jpg" alt="MERL students with Dr. Berry in January 2024" caption="MERL students with Dr. Carlotta A. Berry (Jan 2024)" link="original" >}}
+{{< animated-list title="Current Lab Members" subtitle="2024–2025 Academic Year" tagline="Cross-disciplinary engineers advancing open-source robotics" intro="We are a lean, high-energy group that pairs technical depth with outreach so more learners can build and program robots that look like their communities." delay="500" >}}
+- **Dr. Carlotta A. Berry**
+  
+- **Yueqiao Wang** 
+Computer Engineering Student @ Rose-Hulman Institute of Technology, Class of 2026
+
+- **Tori Scales**
+- **Emily Crouch**
+{{< /animated-list >}}
+
+
+

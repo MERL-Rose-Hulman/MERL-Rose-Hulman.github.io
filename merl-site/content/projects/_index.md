@@ -17,16 +17,3 @@ title       = "Projects"
 description = "Explore MERL's open-source robotics projects including LilyBot, IvyBot, firmware, curriculum, and more."
 image       = "static/images/lily.jpg"
 +++
-
-## Open-Source 3D Printed Modular Educational Robotics
-
-- Lily∞Bot with Micro:Bit
-- Lily∞Bot with Circuit Playground Express
-- Lily∞Bot with Arduino Uno
-- Lily∞Bot with ESP32
-- Lily∞Bot with Raspberry Pi Pico W
-- Lily∞Bot with Raspberry Pi
-- Ivy∞Bot
-- Lily∞Bot Gripper
-- Robot Arm for Computer Vision
-- SAMI Humanoid Robot from Oregon State

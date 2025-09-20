@@ -1,0 +1,29 @@
+{{/* layouts/shortcodes/github-readme.html
+Usage:
+  {{< github-readme "owner/repo" >}}
+  {{< github-readme "owner/repo" branch="main" path="README.md" >}}
+Notes:
+  - Uses resources.GetRemote to pull the file from raw GitHub.
+  - Good for showing a project’s README directly inside your site.
+*/}}
+
+{{- $full := .Get 0 -}}
+{{- $owner := (split $full "/")._0 -}}
+{{- $repo  := (split $full "/")._1 -}}
+{{- $branch := .Get "branch" | default "main" -}}
+{{- $path := .Get "path" | default "README.md" -}}
+
+{{- if or (not $owner) (not $repo) -}}
+  <em>github-readme shortcode: provide "owner/repo".</em>
+{{- else -}}
+  {{- $url := printf "https://raw.githubusercontent.com/%s/%s/%s/%s" $owner $repo $branch $path -}}
+  {{- $res := resources.GetRemote $url -}}
+  {{- if $res -}}
+    {{- $md := $res.Content | markdownify -}}
+    <div class="github-readme">
+      {{ $md | safeHTML }}
+    </div>
+  {{- else -}}
+    <em>Could not fetch {{ $url }}.</em>
+  {{- end -}}
+{{- end -}}
