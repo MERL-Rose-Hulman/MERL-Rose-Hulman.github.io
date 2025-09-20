@@ -55,7 +55,7 @@ Welcome to the github homepage repository for the **Multidisciplinary Educationa
 
 We encourage contributors to focus on content, using AI tools to streamline formatting.
 
-👉 See the full [Content Formatting Prompt](./content/readme.md) for detailed instructions.
+👉 See the full [Content Formatting Prompt](./merl-site/content/readme.md) for detailed instructions.
 
 ---
 
