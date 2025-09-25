@@ -1,0 +1,95 @@
+{{/*
+  figurex shortcode: Responsive, accessible figure with Hugo image processing
+
+  Usage examples:
+  {{< figurex src="image.jpg" alt="LilyBot prototype" caption="Figure: LilyBot v1" >}}
+  {{< figurex src="images/photo.png" alt="Lab" caption="Our lab" link="original" loading="eager" fetchpriority="high" >}}
+  {{< figurex src="https://example.com/pic.jpg" alt="External" caption="External image" >}}
+
+  Params:
+  - src: required, path to image; prefers Page Resource
+  - alt: required
+  - caption: optional (Markdown allowed)
+  - link: optional ("original" to link to original, or URL)
+  - widths: optional comma list (e.g. "320,640,960,1280,1600,1920")
+  - sizes: optional sizes attribute (default covers mobile/desktop)
+  - loading: optional (lazy|eager), default lazy
+  - fetchpriority: optional (auto|high|low), default auto
+*/}}
+
+{{- $src := .Get "src" -}}
+{{- $alt := .Get "alt" | default "" -}}
+{{- $caption := .Get "caption" -}}
+{{- $link := .Get "link" -}}
+{{- $widthsParam := .Get "widths" | default "320,640,960,1280,1600,1920" -}}
+{{- $sizes := .Get "sizes" | default "(min-width: 1024px) 960px, (min-width: 768px) 720px, 100vw" -}}
+{{- $loading := .Get "loading" | default "lazy" -}}
+{{- $fetchpriority := .Get "fetchpriority" | default "auto" -}}
+
+{{- $widths := slice -}}
+{{- range (split $widthsParam ",") -}}
+  {{- $w := trim . " " -}}
+  {{- with $w -}}
+    {{- $widths = $widths | append . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $isExternal := or (hasPrefix $src "http://") (hasPrefix $src "https://") -}}
+{{- $isSVG := strings.HasSuffix (lower $src) ".svg" -}}
+
+<figure class="not-prose my-6">
+  {{- if and (not $isExternal) (.Page.Resources.Get $src) (not $isSVG) -}}
+    {{- $res := .Page.Resources.Get $src -}}
+    {{- $actual := $res.Resize (printf "960x q85 Lanczos") -}}
+    <div class="inline-block overflow-hidden rounded-xl shadow-lg transition-all duration-300 ease-out hover:shadow-xl">
+      <picture>
+        {{- /* WebP source */ -}}
+        <source type="image/webp" srcset="
+          {{- range $i, $w := $widths -}}
+            {{- $wi := int $w -}}
+            {{- if ge $res.Width $wi -}}
+              {{- if $i }},{{ end -}}
+              {{- ($res.Resize (printf "%dx webp q85 Lanczos" $wi)).RelPermalink }} {{ $w }}w
+            {{- end -}}
+          {{- end -}}
+        " sizes="{{ $sizes }}" />
+        {{- /* JPEG fallback */ -}}
+        <source type="image/jpeg" srcset="
+          {{- range $i, $w := $widths -}}
+            {{- $wi := int $w -}}
+            {{- if ge $res.Width $wi -}}
+              {{- if $i }},{{ end -}}
+              {{- ($res.Resize (printf "%dx jpeg q85 Lanczos" $wi)).RelPermalink }} {{ $w }}w
+            {{- end -}}
+          {{- end -}}
+        " sizes="{{ $sizes }}" />
+        {{- /* Fallback img */ -}}
+        {{- $imgTag := printf "<img src=\"%s\" alt=\"%s\" width=\"%d\" height=\"%d\" class=\"h-auto w-full transition-transform duration-300 ease-out hover:scale-105\" loading=\"%s\" decoding=\"async\" fetchpriority=\"%s\">" $actual.RelPermalink ($alt | htmlEscape) $res.Width $res.Height $loading $fetchpriority | safeHTML -}}
+        {{- if eq $link "original" -}}
+          <a href="{{ $res.RelPermalink }}" target="_blank" rel="noopener">{{ $imgTag }}</a>
+        {{- else if and $link (ne (lower $link) "false") -}}
+          <a href="{{ $link }}" target="_blank" rel="noopener">{{ $imgTag }}</a>
+        {{- else -}}
+          {{ $imgTag }}
+        {{- end -}}
+      </picture>
+    </div>
+  {{- else -}}
+    {{- /* External or SVG or not a Page Resource */ -}}
+    <div class="inline-block overflow-hidden rounded-xl shadow-lg transition-all duration-300 ease-out hover:shadow-xl">
+      {{- $img := printf "<img src=\"%s\" alt=\"%s\" class=\"h-auto w-full transition-transform duration-300 ease-out hover:scale-105\" loading=\"%s\" decoding=\"async\">" ($src | safeURL) ($alt | htmlEscape) $loading | safeHTML -}}
+      {{- if eq $link "original" -}}
+        <a href="{{ $src | safeURL }}" target="_blank" rel="noopener">{{ $img }}</a>
+      {{- else if and $link (ne (lower $link) "false") -}}
+        <a href="{{ $link }}" target="_blank" rel="noopener">{{ $img }}</a>
+      {{- else -}}
+        {{ $img }}
+      {{- end -}}
+    </div>
+  {{- end -}}
+
+  {{- with $caption -}}
+    <figcaption class="text-muted-foreground mt-3 text-sm italic">{{ . | $.Page.RenderString }}</figcaption>
+  {{- end -}}
+</figure>
+

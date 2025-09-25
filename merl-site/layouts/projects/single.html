@@ -1,0 +1,32 @@
+{{ define "main" }}
+  {{ $page := . }}
+  {{ partial "navigation/breadcrumb.html" . }}
+
+  <header class="mb-8">
+    <h1 class="text-foreground mb-4 text-3xl font-bold md:text-4xl">
+      {{ .Title }}
+    </h1>
+    {{ if .Params.summary }}
+      <div class="text-muted-foreground mb-6 text-lg leading-relaxed">
+        {{ .Params.summary | plainify }}
+      </div>
+    {{ end }}
+  </header>
+
+  {{ with .Params.repo }}
+    {{- $opts := dict -}}
+    {{- with $page.Params.repo_color }}{{ $opts = merge $opts (dict "color" .) }}{{ end -}}
+    {{- with $page.Params.repo_background }}{{ $opts = merge $opts (dict "background" .) }}{{ end -}}
+    {{- with $page.Params.repo_foreground }}{{ $opts = merge $opts (dict "foreground" .) }}{{ end -}}
+    {{- with $page.Params.repo_branch }}{{ $opts = merge $opts (dict "branch" .) }}{{ end -}}
+    {{- with $page.Params.repo_description }}{{ $opts = merge $opts (dict "description" .) }}{{ end -}}
+    {{- with $page.Params.repo_type }}{{ $opts = merge $opts (dict "type" .) }}{{ end -}}
+    <div class="mb-10">
+      {{ partial "github/repo-card.html" (dict "page" $page "raw" . "options" $opts) }}
+    </div>
+  {{ end }}
+
+  <article class="prose prose-neutral dark:prose-invert max-w-none">
+    {{ .Content }}
+  </article>
+{{ end }}

@@ -32,3 +32,22 @@ h1, h2, h3, h4, h5, h6 {
 .post-content pre, code {
     font-family: Syne, sans-serif;
 }
+
+/* A11y: Skip link */
+.skip-link {
+  position: fixed;
+  left: 12px;
+  top: 12px;
+  transform: translateY(-150%);
+  background: var(--color-primary, #0a58ca);
+  color: var(--color-primary-foreground, #fff);
+  padding: 8px 12px;
+  border-radius: 8px;
+  z-index: 9999;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--color-border, #222);
+}

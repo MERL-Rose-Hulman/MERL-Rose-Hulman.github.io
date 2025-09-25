@@ -1,0 +1,213 @@
+{{/*
+  Shared renderer for the github-repo shortcode and template hook.
+  Expected context (dict):
+    page    => current Page (for Scratch/style dedupe)
+    raw     => repo/user identifier (owner/repo or owner)
+    options => optional map of shortcode/front matter parameters
+*/}}
+
+{{- $page := .page -}}
+{{- $raw := printf "%v" (default "" .raw) -}}
+{{- $options := default (dict) .options -}}
+
+{{- $styleKey := "github-card-css" -}}
+{{- if and $page (not ($page.Scratch.Get $styleKey)) -}}
+  <style>
+    .gh-card{position:relative;overflow:hidden;border-radius:22px;padding:28px;margin:26px 0;background:var(--gh-background,linear-gradient(135deg,#6366f1,#0f172a));color:var(--gh-foreground,#f8fafc);box-shadow:0 28px 60px -28px rgba(15,23,42,.85);transition:transform .35s cubic-bezier(.4,0,.2,1);will-change:transform}
+    .gh-card::before{content:"";position:absolute;inset:-40% -20%;background:radial-gradient(circle at 20% 20%,var(--gh-accent,#6366f1),transparent 60%);opacity:.55;pointer-events:none;mix-blend-mode:screen}
+    .gh-card:hover{transform:translateY(-4px)}
+    .gh-card a{color:inherit;text-decoration:none}
+    .gh-card a:hover{text-decoration:underline;text-decoration-color:rgba(255,255,255,.4)}
+    .gh-card__header{position:relative;display:flex;flex-wrap:wrap;gap:20px;align-items:center;z-index:1}
+    .gh-card__avatar{width:72px;height:72px;border-radius:20px;border:3px solid rgba(255,255,255,.18);object-fit:cover;box-shadow:0 10px 30px -18px rgba(15,23,42,.9)}
+    .gh-card__meta{flex:1 1 260px;min-width:220px}
+    .gh-card__title{font-size:1.35rem;font-weight:600;display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0}
+    .gh-card__subtitle{font-size:.95rem;opacity:.75}
+    .gh-chip{font-size:.8rem;font-weight:500;border-radius:999px;padding:2px 12px;border:1px solid rgba(255,255,255,.25);background:rgba(15,23,42,.35)}
+    .gh-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+    .gh-tag{background:rgba(15,23,42,.55);padding:4px 11px;border-radius:999px;font-size:.75rem;letter-spacing:.02em}
+    .gh-actions{display:flex;flex-direction:column;gap:10px;align-items:flex-end;min-width:170px}
+    .gh-button{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:14px;font-weight:600;background:rgba(15,23,42,.6);border:1px solid rgba(255,255,255,.18)}
+    .gh-button--ghost{background:transparent}
+    .gh-stats{display:flex;flex-wrap:wrap;gap:18px;margin-top:18px;font-size:.86rem;opacity:.85;z-index:1;position:relative}
+    .gh-note{margin-top:16px;font-size:.8rem;opacity:.65;z-index:1;position:relative}
+    @media(max-width:640px){.gh-actions{width:100%;align-items:stretch}.gh-button{justify-content:center}}
+  </style>
+  {{- if $page }}{{ $page.Scratch.Set $styleKey true }}{{ end -}}
+{{- end -}}
+
+{{- $raw = strings.TrimSpace $raw -}}
+{{- $raw = replaceRE `(?i)^https?://(www\.)?github\.com/` "" $raw -}}
+{{- $raw = replaceRE `(?i)^ssh://git@github\.com/` "" $raw -}}
+{{- $raw = replaceRE `(?i)^git@github\.com:` "" $raw -}}
+{{- $raw = replaceRE `(?i)^github\.com/` "" $raw -}}
+{{- $raw = replaceRE `(?i)\.git$` "" $raw -}}
+{{- $raw = trim $raw "/" -}}
+
+{{- if eq $raw "" -}}
+  <em>github-repo shortcode: please provide a GitHub repository ("owner/repo") or user.</em>
+{{- else -}}
+  {{- $explicitType := "" -}}
+  {{- with index $options "type" }}
+    {{- $val := strings.TrimSpace (printf "%v" .) -}}
+    {{- if ne $val "" }}{{ $explicitType = lower $val }}{{ end -}}
+  {{- end -}}
+
+  {{- $segments := split $raw "/" -}}
+  {{- $segmentCount := len $segments -}}
+  {{- $isUser := cond (ne $explicitType "") (eq $explicitType "user") (lt $segmentCount 2) -}}
+
+  {{- if and (not $isUser) (lt $segmentCount 2) -}}
+    <em>github-repo shortcode: please provide a GitHub repository in the form "owner/repo".</em>
+  {{- else -}}
+    {{- $accent := "#6366F1" -}}
+    {{- with index $options "color" }}
+      {{- $val := strings.TrimSpace (printf "%v" .) -}}
+      {{- if ne $val "" }}{{ $accent = $val }}{{ end -}}
+    {{- end -}}
+
+    {{- $background := "" -}}
+    {{- with index $options "background" }}
+      {{- $val := strings.TrimSpace (printf "%v" .) -}}
+      {{- if ne $val "" }}{{ $background = $val }}{{ end -}}
+    {{- end -}}
+    {{- if eq $background "" }}{{ $background = printf "linear-gradient(135deg,%s 0%%,#0f172a 100%%)" $accent }}{{ end -}}
+
+    {{- $foreground := "#F8FAFC" -}}
+    {{- with index $options "foreground" }}
+      {{- $val := strings.TrimSpace (printf "%v" .) -}}
+      {{- if ne $val "" }}{{ $foreground = $val }}{{ end -}}
+    {{- end -}}
+
+    {{- $descOverride := "" -}}
+    {{- with index $options "description" }}{{ $descOverride = strings.TrimSpace (printf "%v" .) }}{{ end -}}
+
+    {{- $branchOverride := "" -}}
+    {{- with index $options "branch" }}{{ $branchOverride = strings.TrimSpace (printf "%v" .) }}{{ end -}}
+
+    {{- $style := printf "--gh-accent:%s;--gh-background:%s;--gh-foreground:%s;" $accent $background $foreground | safeCSS -}}
+    {{- $headers := dict "Accept" "application/vnd.github+json" "User-Agent" "MERL-Hugo-Shortcode" -}}
+    {{- $requestOpts := dict "headers" $headers "timeout" "5s" -}}
+
+    {{- if $isUser -}}
+      {{- $user := strings.TrimSpace (index $segments 0) -}}
+      {{- $hasAPI := false -}}
+      {{- $data := dict -}}
+      {{- $remoteTry := try (resources.GetRemote (printf "https://api.github.com/users/%s" $user) $requestOpts) -}}
+      {{- if and $remoteTry (not $remoteTry.Err) -}}
+        {{- $jsonTry := try (transform.Unmarshal $remoteTry.Value) -}}
+        {{- if and $jsonTry (not $jsonTry.Err) -}}
+          {{- $data = $jsonTry.Value -}}
+          {{- $hasAPI = true -}}
+        {{- end -}}
+      {{- end -}}
+
+      {{- $name := default $user (index $data "name") -}}
+      {{- $bio := default "" (index $data "bio") -}}
+      {{- $avatar := default "" (index $data "avatar_url") -}}
+      {{- $company := default "" (index $data "company") -}}
+      {{- $location := default "" (index $data "location") -}}
+      {{- $followers := index $data "followers" -}}
+      {{- $publicRepos := index $data "public_repos" -}}
+      {{- $htmlURL := printf "https://github.com/%s" $user -}}
+
+      <article class="gh-card gh-card--user" style="{{ $style }}">
+        <div class="gh-card__header">
+          {{- if $avatar }}<img src="{{ $avatar }}" alt="{{ $name }} avatar" class="gh-card__avatar">{{ end -}}
+          <div class="gh-card__meta">
+            <h3 class="gh-card__title">
+              <a href="{{ $htmlURL }}">{{ $name }}</a>
+              <span class="gh-card__subtitle">@{{ $user }}</span>
+            </h3>
+            {{- if $bio }}<p style="margin:.45rem 0 0;font-size:.95rem;opacity:.9;">{{ $bio }}</p>{{ end -}}
+            <div style="display:flex;gap:14px;margin-top:12px;font-size:.86rem;opacity:.85;flex-wrap:wrap;">
+              {{- with $company }}<span>🏢 {{ . }}</span>{{ end -}}
+              {{- with $location }}<span>📍 {{ . }}</span>{{ end -}}
+              {{- if $hasAPI }}<span>👥 {{ $followers }} followers</span>{{ end -}}
+              {{- if $hasAPI }}<span>📦 {{ $publicRepos }} public repos</span>{{ end -}}
+            </div>
+          </div>
+          <div class="gh-actions">
+            <a class="gh-button" href="{{ $htmlURL }}">
+              Visit GitHub
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.22 3.22a.75.75 0 0 1 1.06 0L10.78 7.72a.75.75 0 0 1 0 1.06L6.28 13.28a.75.75 0 0 1-1.06-1.06L8.94 8 5.22 4.28a.75.75 0 0 1 0-1.06Z" fill="currentColor"/></svg>
+            </a>
+          </div>
+        </div>
+        {{- if not $hasAPI }}
+          <p class="gh-note">Live GitHub data unavailable. Showing cached profile link.</p>
+        {{- end }}
+      </article>
+
+    {{- else -}}
+      {{- $owner := strings.TrimSpace (index $segments 0) -}}
+      {{- $repo := strings.TrimSpace (index $segments 1) -}}
+      {{- $hasAPI := false -}}
+      {{- $data := dict -}}
+      {{- $remoteTry := try (resources.GetRemote (printf "https://api.github.com/repos/%s/%s" $owner $repo) $requestOpts) -}}
+      {{- if and $remoteTry (not $remoteTry.Err) -}}
+        {{- $jsonTry := try (transform.Unmarshal $remoteTry.Value) -}}
+        {{- if and $jsonTry (not $jsonTry.Err) -}}
+          {{- $data = $jsonTry.Value -}}
+          {{- $hasAPI = true -}}
+        {{- end -}}
+      {{- end -}}
+
+      {{- $name := default $repo (index $data "name") -}}
+      {{- $defaultDesc := default "" (index $data "description") -}}
+      {{- $desc := cond (ne $descOverride "") $descOverride $defaultDesc -}}
+      {{- $defaultBranch := default "main" (index $data "default_branch") -}}
+      {{- $branch := cond (ne $branchOverride "") $branchOverride $defaultBranch -}}
+      {{- $topics := default (slice) (index $data "topics") -}}
+      {{- $ownerData := index $data "owner" -}}
+      {{- $avatar := "" -}}
+      {{- if $ownerData }}{{ $avatar = default "" (index $ownerData "avatar_url") }}{{ end -}}
+      {{- $stars := default 0 (index $data "stargazers_count") -}}
+      {{- $forks := default 0 (index $data "forks_count") -}}
+      {{- $issues := default 0 (index $data "open_issues_count") -}}
+      {{- $homepage := default "" (index $data "homepage") -}}
+      {{- $updated := index $data "pushed_at" -}}
+      {{- $htmlURL := printf "https://github.com/%s/%s" $owner $repo -}}
+
+      <article class="gh-card gh-card--repo" style="{{ $style }}">
+        <div class="gh-card__header">
+          {{- if $avatar }}<img src="{{ $avatar }}" alt="{{ $owner }} avatar" class="gh-card__avatar">{{ end -}}
+          <div class="gh-card__meta">
+            <h3 class="gh-card__title">
+              <a href="{{ $htmlURL }}">{{ $owner }}/{{ $name }}</a>
+              {{- if $hasAPI }}<span class="gh-chip">{{ $branch }} branch</span>{{ end -}}
+            </h3>
+            {{- if $desc }}<p style="margin:.45rem 0 0;font-size:.95rem;opacity:.9;">{{ $desc }}</p>{{ end -}}
+            {{- if and $hasAPI (gt (len $topics) 0) }}
+              <div class="gh-tags">
+                {{- range first 6 $topics }}<span class="gh-tag">#{{ . }}</span>{{ end -}}
+              </div>
+            {{- end -}}
+          </div>
+          <div class="gh-actions">
+            <a class="gh-button" href="{{ printf "%s/archive/refs/heads/%s.zip" $htmlURL $branch }}">
+              Download ZIP
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 1.5a.75.75 0 0 1 .75.75v6.19l2.72-2.72a.75.75 0 1 1 1.06 1.06l-4 4a.75.75 0 0 1-1.06 0l-4-4A.75.75 0 0 1 4.53 5.7l2.72 2.72V2.25A.75.75 0 0 1 8 1.5Zm-5 9a.75.75 0 0 1 .75.75V12a1 1 0 0 0 1 1h6.5a1 1 0 0 0 1-1v-.75a.75.75 0 0 1 1.5 0V12A2.5 2.5 0 0 1 12.25 14.5h-6.5A2.5 2.5 0 0 1 3.25 12v-.75A.75.75 0 0 1 3 10.5Z" fill="currentColor"/></svg>
+            </a>
+            <a class="gh-button gh-button--ghost" href="{{ $htmlURL }}">
+              View Repo
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.22 4.22a.75.75 0 0 1 1.06 0L9.5 8.44l-4.22 4.22a.75.75 0 0 1-1.06-1.06l3.19-3.19-3.19-3.19a.75.75 0 0 1 0-1.06Z" fill="currentColor"/></svg>
+            </a>
+          </div>
+        </div>
+        {{- if $hasAPI }}
+          <div class="gh-stats">
+            <span>★ {{ $stars }}</span>
+            <span>⑂ {{ $forks }}</span>
+            <span>Issues {{ $issues }}</span>
+            {{- with $homepage }}<span>Website: <a href="{{ . }}">{{ . }}</a></span>{{ end -}}
+            {{- with $updated }}<span>Updated {{ . | time | time.Format "2006-01-02" }}</span>{{ end -}}
+          </div>
+        {{- else }}
+          <p class="gh-note">Live GitHub data unavailable. Showing cached repository link.</p>
+        {{- end -}}
+      </article>
+
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

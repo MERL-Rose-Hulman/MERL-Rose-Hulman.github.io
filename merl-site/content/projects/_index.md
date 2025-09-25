@@ -1,12 +1,19 @@
----
-title: "Projects"
-date = 2023-01-01T08:00:00-07:00
-draft = false
----
++++
+title       = "Projects"
+date        = "2023-01-01T08:00:00-05:00"
+draft       = false
+tags        = ["projects", "robotics", "open-source", "education", "lilybot", "ivybot", "firmware", "curriculum"]
+categories  = ["robotics", "education"]
+description = "MERL projects include open-source educational robotics platforms like LilyBot and IvyBot, plus firmware, curriculum, and community resources."
+images      = ["/images/projects-hero.jpg"]
+slug        = "projects"
+type        = "page"
+aliases     = ["/work/"]
+keywords    = ["MERL", "projects", "robotics", "open-source", "education", "LilyBot", "IvyBot"]
+lastmod     = "2023-01-01T08:00:00-05:00"
 
-
-## Publications
-
-- Berry, C., Collins, K. N.F., & Larregola, A. M. (2024). *Open-source Robotics for Academics: A Platform that Grows with the User.* In Proceedings of the 2024 ASEE Annual Conference & Exposition.
-
-- Berry, C. A., Larregola, A. M., Collins, K., & McGee, J. (2023). *Robotics for the Streets: Open-Source Robotics for Academics.* In 2023 IEEE Frontiers in Education Conference (FIE), pp. 1-5. IEEE.
+[params.og]
+title       = "Projects"
+description = "Explore MERL's open-source robotics projects including LilyBot, IvyBot, firmware, curriculum, and more."
+image       = "static/images/lily.jpg"
++++

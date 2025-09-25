@@ -1,0 +1,22 @@
+{{/*
+  github-repo shortcode — renders a rich GitHub card for repositories or users.
+  Delegates rendering to the shared partial at _partials/github/repo-card.html.
+*/}}
+
+{{- $raw := "" -}}
+{{- if .IsNamedParams -}}
+  {{- with .Get "repo" }}{{ $raw = . }}{{ end -}}
+  {{- if eq $raw "" }}{{ with .Get "href" }}{{ $raw = . }}{{ end }}{{ end -}}
+  {{- if eq $raw "" }}{{ with .Get "url" }}{{ $raw = . }}{{ end }}{{ end -}}
+  {{- if eq $raw "" }}{{ with .Get "target" }}{{ $raw = . }}{{ end }}{{ end -}}
+  {{- if eq $raw "" }}{{ with .Get "user" }}{{ $raw = . }}{{ end }}{{ end -}}
+{{- else -}}
+  {{- with .Get 0 }}{{ $raw = . }}{{ end -}}
+{{- end -}}
+
+{{- $options := dict -}}
+{{- if .IsNamedParams -}}
+  {{- $options = .Params -}}
+{{- end -}}
+
+{{- partial "github/repo-card.html" (dict "page" .Page "raw" $raw "options" $options) -}}
