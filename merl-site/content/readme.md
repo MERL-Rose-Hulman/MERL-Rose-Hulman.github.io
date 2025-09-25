@@ -120,6 +120,7 @@ Prompt END
 - Handles inline merge directives like `[[merge-source: ...]]`.  
 
 ---
+<<<<<<< HEAD
 Here’s your text formatted in clean Markdown:
 
 # What the prompt does
@@ -234,3 +235,17 @@ That’s it—paste the prompt, drop in your article + optional directives, and 
 
 
 
+=======
+
+## Linking in the Main README
+
+In your repo’s root `README.md`, replace the old section with:
+
+```markdown
+## 🤖 Accelerating Content Creation with AI
+
+We encourage contributors to focus on content, using AI tools to streamline formatting.
+
+👉 See the full [Content Formatting Prompt](./content/readme.md) for step-by-step instructions and the ready-to-copy prompt.
+```
+>>>>>>> 16976e5 (Replace main with deployment code)
