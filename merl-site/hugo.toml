@@ -32,7 +32,6 @@ defaultContentLanguageInSubdir = false
     enableOpenGraph = true
     enableTwitterCard = true
     enableJsonLd = true
-    # ⚠ 假设：使用头像作为默认社交分享图
     defaultImage = "/images/avatar.jpeg"
   [params.colorScheme]
   [params.colorScheme.themes]
@@ -114,9 +113,14 @@ defaultContentLanguageInSubdir = false
     weight = 5
 
   [[menu.main]]
+    name = "nav.resources"
+    url = "/resources/"
+    weight = 6
+
+  [[menu.main]]
     name = "nav.about"
     url = "/about/"
-    weight = 6
+    weight = 7
 
   [params.favicon]
     svg = "/images/logo.svg"
