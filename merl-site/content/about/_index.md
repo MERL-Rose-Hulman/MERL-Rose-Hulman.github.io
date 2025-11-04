@@ -17,18 +17,22 @@ Our mission is that representation matters and robotics should be for the street
 
 Contact: merl.rose.hulman@gmail.com
 
-{{< animated-list title="Current Lab Members" subtitle="2024–2025 Academic Year" tagline="Cross-disciplinary engineers advancing open-source robotics" intro="We are a lean, high-energy group that pairs technical depth with outreach so more learners can build and program robots that look like their communities." delay="500" >}}
-- ![Portrait of Dr. Carlotta A. Berry](/images/avatar.svg)
-  **Dr. Carlotta A. Berry**
-
-  MERL Co-Director · Professor of Electrical & Computer Engineering  
-  Rose-Hulman Institute of Technology
-
-- **Yueqiao Wang**
-
-  Computer Engineering Student @ Rose-Hulman Institute of Technology, Class of 2026
-
-- **Tori Scales**
-
-- **Emily Crouch**
-{{< /animated-list >}}
+{{< lab-member-list
+    data="lab_members/current"
+    title="Current Lab Members"
+    subtitle="2025-2026 Academic Year"
+    tagline="Cross-disciplinary engineers advancing open-source robotics"
+    intro="We are a lean, high-energy group that pairs technical depth with outreach so more learners can build and program robots that look like their communities."
+    delay="160"
+>}}
+{{< /lab-member-list >}}
+<!-- when we need alumni list, uncomment this and create lab_members/alumni.yaml -->
+<!-- 
+{{< lab-member-list
+    data="lab_members/alumni"
+    title="Lab Alumni"
+    subtitle="Past collaborators and mentors"
+    delay="160"
+>}}
+{{< /lab-member-list >}}
+ -->

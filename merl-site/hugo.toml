@@ -8,6 +8,9 @@ languageCode = "en"
 defaultContentLanguage = "en"
 defaultContentLanguageInSubdir = false
 
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
 [languages]
   [languages.en]
     languageName = "English"
