@@ -106,6 +106,34 @@
       display: block;
       font-size: clamp(0.95rem, 2.4vw, 1.05rem);
       line-height: 1.6;
+      margin: 0;
+    }
+
+    .animated-list-block li :is(p, span) + :is(p, span) {
+      margin-top: clamp(0.35rem, 1vw, 0.55rem);
+    }
+
+    .animated-list-block li.has-photo {
+      display: grid;
+      grid-template-columns: minmax(64px, clamp(72px, 16vw, 92px)) 1fr;
+      gap: clamp(0.75rem, 2vw, 1.1rem);
+      align-items: start;
+    }
+
+    .animated-list-block li.has-photo > :first-child {
+      margin: 0;
+      align-self: stretch;
+    }
+
+    .animated-list-block li.has-photo > :first-child img {
+      width: clamp(64px, 16vw, 92px);
+      aspect-ratio: 1 / 1;
+      border-radius: 20%;
+      object-fit: cover;
+      box-shadow: 0 10px 24px -18px rgba(10, 12, 50, 0.6);
+      border: 1px solid color-mix(in srgb, var(--color-border, rgba(180, 190, 210, 0.7)) 65%, transparent);
+      background: color-mix(in srgb, var(--color-muted, rgba(230, 234, 248, 0.6)) 70%, transparent);
+      display: block;
     }
 
     .animated-list-block li.is-visible {
@@ -122,6 +150,11 @@
 
       .animated-list-block li {
         padding: 0.85rem 1rem;
+      }
+
+      .animated-list-block li.has-photo {
+        grid-template-columns: minmax(56px, 72px) 1fr;
+        gap: 0.75rem;
       }
     }
 
@@ -186,6 +219,29 @@
       if (!items.length) {
         return;
       }
+
+      items.forEach((item) => {
+        const photo = item.querySelector('img');
+        if (!photo) {
+          return;
+        }
+
+        item.classList.add('has-photo');
+
+        const photoContainer = photo.closest('figure, p, div, span') || photo;
+        const firstChild = item.firstElementChild;
+        if (photoContainer && photoContainer !== firstChild) {
+          item.insertBefore(photoContainer, firstChild);
+        }
+
+        if (!photo.hasAttribute('loading')) {
+          photo.setAttribute('loading', 'lazy');
+        }
+
+        if (!photo.hasAttribute('decoding')) {
+          photo.setAttribute('decoding', 'async');
+        }
+      });
 
       lists.forEach((list) => {
         list.classList.add('animated-list-items');

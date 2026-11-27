@@ -16,11 +16,18 @@
   {{ with .Params.repo }}
     {{- $opts := dict -}}
     {{- with $page.Params.repo_color }}{{ $opts = merge $opts (dict "color" .) }}{{ end -}}
+    {{- with $page.Params.repo_color_light }}{{ $opts = merge $opts (dict "color_light" .) }}{{ end -}}
+    {{- with $page.Params.repo_color_dark }}{{ $opts = merge $opts (dict "color_dark" .) }}{{ end -}}
     {{- with $page.Params.repo_background }}{{ $opts = merge $opts (dict "background" .) }}{{ end -}}
+    {{- with $page.Params.repo_background_light }}{{ $opts = merge $opts (dict "background_light" .) }}{{ end -}}
+    {{- with $page.Params.repo_background_dark }}{{ $opts = merge $opts (dict "background_dark" .) }}{{ end -}}
     {{- with $page.Params.repo_foreground }}{{ $opts = merge $opts (dict "foreground" .) }}{{ end -}}
+    {{- with $page.Params.repo_foreground_light }}{{ $opts = merge $opts (dict "foreground_light" .) }}{{ end -}}
+    {{- with $page.Params.repo_foreground_dark }}{{ $opts = merge $opts (dict "foreground_dark" .) }}{{ end -}}
     {{- with $page.Params.repo_branch }}{{ $opts = merge $opts (dict "branch" .) }}{{ end -}}
     {{- with $page.Params.repo_description }}{{ $opts = merge $opts (dict "description" .) }}{{ end -}}
     {{- with $page.Params.repo_type }}{{ $opts = merge $opts (dict "type" .) }}{{ end -}}
+    {{- with $page.Params.repo_variant }}{{ $opts = merge $opts (dict "variant" .) }}{{ end -}}
     <div class="mb-10">
       {{ partial "github/repo-card.html" (dict "page" $page "raw" . "options" $opts) }}
     </div>

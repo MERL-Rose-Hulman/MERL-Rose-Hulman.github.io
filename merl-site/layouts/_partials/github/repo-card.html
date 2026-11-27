@@ -13,7 +13,7 @@
 {{- $styleKey := "github-card-css" -}}
 {{- if and $page (not ($page.Scratch.Get $styleKey)) -}}
   <style>
-    .gh-card{position:relative;overflow:hidden;border-radius:22px;padding:28px;margin:26px 0;background:var(--gh-background,linear-gradient(135deg,#6366f1,#0f172a));color:var(--gh-foreground,#f8fafc);box-shadow:0 28px 60px -28px rgba(15,23,42,.85);transition:transform .35s cubic-bezier(.4,0,.2,1);will-change:transform}
+    .gh-card{position:relative;overflow:hidden;border-radius:22px;padding:28px;margin:26px 0;--gh-accent:var(--gh-accent-light,#6366f1);--gh-background:var(--gh-background-light,linear-gradient(135deg,var(--gh-accent) 0%,#0f172a 100%));--gh-foreground:var(--gh-foreground-light,#f8fafc);background:var(--gh-background);color:var(--gh-foreground);box-shadow:0 28px 60px -28px rgba(15,23,42,.85);transition:transform .35s cubic-bezier(.4,0,.2,1);will-change:transform}
     .gh-card::before{content:"";position:absolute;inset:-40% -20%;background:radial-gradient(circle at 20% 20%,var(--gh-accent,#6366f1),transparent 60%);opacity:.55;pointer-events:none;mix-blend-mode:screen}
     .gh-card:hover{transform:translateY(-4px)}
     .gh-card a{color:inherit;text-decoration:none}
@@ -31,7 +31,16 @@
     .gh-button--ghost{background:transparent}
     .gh-stats{display:flex;flex-wrap:wrap;gap:18px;margin-top:18px;font-size:.86rem;opacity:.85;z-index:1;position:relative}
     .gh-note{margin-top:16px;font-size:.8rem;opacity:.65;z-index:1;position:relative}
-    @media(max-width:640px){.gh-actions{width:100%;align-items:stretch}.gh-button{justify-content:center}}
+    .gh-card--compact{padding:20px;border-radius:18px}
+    .gh-card__compact-body{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;justify-content:space-between}
+    .gh-card--compact .gh-card__meta{min-width:0;flex:1 1 220px}
+    .gh-card--compact .gh-card__title{font-size:1.1rem;margin:0}
+    .gh-card--compact .gh-card__description{margin:.35rem 0 0;font-size:.9rem;opacity:.88}
+    .gh-card--compact .gh-button{padding:8px 14px;border-radius:12px;font-size:.9rem}
+    .gh-card--compact .gh-stats{margin-top:12px;font-size:.8rem;gap:12px}
+    @media(max-width:640px){.gh-actions{width:100%;align-items:stretch}.gh-button{justify-content:center}.gh-card__compact-body{flex-direction:column}.gh-card--compact .gh-card__meta{flex-basis:auto}}
+    :root.dark .gh-card,.dark .gh-card{--gh-accent:var(--gh-accent-dark,var(--gh-accent-light,#6366f1));--gh-background:var(--gh-background-dark,var(--gh-background-light,linear-gradient(135deg,var(--gh-accent) 0%,#020617 100%)));--gh-foreground:var(--gh-foreground-dark,var(--gh-foreground-light,#f8fafc))}
+    @media(prefers-color-scheme:dark){.gh-card{--gh-accent:var(--gh-accent-dark,var(--gh-accent-light,#6366f1));--gh-background:var(--gh-background-dark,var(--gh-background-light,linear-gradient(135deg,var(--gh-accent) 0%,#020617 100%)));--gh-foreground:var(--gh-foreground-dark,var(--gh-foreground-light,#f8fafc))}}
   </style>
   {{- if $page }}{{ $page.Scratch.Set $styleKey true }}{{ end -}}
 {{- end -}}
@@ -60,32 +69,188 @@
   {{- if and (not $isUser) (lt $segmentCount 2) -}}
     <em>github-repo shortcode: please provide a GitHub repository in the form "owner/repo".</em>
   {{- else -}}
-    {{- $accent := "#6366F1" -}}
+    {{- $colorSingle := "" -}}
     {{- with index $options "color" }}
       {{- $val := strings.TrimSpace (printf "%v" .) -}}
-      {{- if ne $val "" }}{{ $accent = $val }}{{ end -}}
+      {{- if ne $val "" }}{{ $colorSingle = $val }}{{ end -}}
+    {{- end -}}
+    {{- if eq $colorSingle "" }}
+      {{- with index $options "repo_color" }}
+        {{- $val := strings.TrimSpace (printf "%v" .) -}}
+        {{- if ne $val "" }}{{ $colorSingle = $val }}{{ end -}}
+      {{- end -}}
     {{- end -}}
 
-    {{- $background := "" -}}
+    {{- $accentLight := "" -}}
+    {{- with index $options "color_light" }}
+      {{- $val := strings.TrimSpace (printf "%v" .) -}}
+      {{- if ne $val "" }}{{ $accentLight = $val }}{{ end -}}
+    {{- end -}}
+    {{- if eq $accentLight "" }}
+      {{- with index $options "repo_color_light" }}
+        {{- $val := strings.TrimSpace (printf "%v" .) -}}
+        {{- if ne $val "" }}{{ $accentLight = $val }}{{ end -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- $accentDark := "" -}}
+    {{- with index $options "color_dark" }}
+      {{- $val := strings.TrimSpace (printf "%v" .) -}}
+      {{- if ne $val "" }}{{ $accentDark = $val }}{{ end -}}
+    {{- end -}}
+    {{- if eq $accentDark "" }}
+      {{- with index $options "repo_color_dark" }}
+        {{- $val := strings.TrimSpace (printf "%v" .) -}}
+        {{- if ne $val "" }}{{ $accentDark = $val }}{{ end -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- if eq $accentLight "" }}
+      {{- if ne $colorSingle "" }}
+        {{- $accentLight = $colorSingle -}}
+      {{- else -}}
+        {{- $accentLight = "#6366F1" -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- if eq $accentDark "" }}
+      {{- if ne $colorSingle "" }}
+        {{- $accentDark = $colorSingle -}}
+      {{- else -}}
+        {{- $accentDark = $accentLight -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- $backgroundSingle := "" -}}
     {{- with index $options "background" }}
       {{- $val := strings.TrimSpace (printf "%v" .) -}}
-      {{- if ne $val "" }}{{ $background = $val }}{{ end -}}
+      {{- if ne $val "" }}{{ $backgroundSingle = $val }}{{ end -}}
     {{- end -}}
-    {{- if eq $background "" }}{{ $background = printf "linear-gradient(135deg,%s 0%%,#0f172a 100%%)" $accent }}{{ end -}}
+    {{- if eq $backgroundSingle "" }}
+      {{- with index $options "repo_background" }}
+        {{- $val := strings.TrimSpace (printf "%v" .) -}}
+        {{- if ne $val "" }}{{ $backgroundSingle = $val }}{{ end -}}
+      {{- end -}}
+    {{- end -}}
 
-    {{- $foreground := "#F8FAFC" -}}
+    {{- $backgroundLight := "" -}}
+    {{- with index $options "background_light" }}
+      {{- $val := strings.TrimSpace (printf "%v" .) -}}
+      {{- if ne $val "" }}{{ $backgroundLight = $val }}{{ end -}}
+    {{- end -}}
+    {{- if eq $backgroundLight "" }}
+      {{- with index $options "repo_background_light" }}
+        {{- $val := strings.TrimSpace (printf "%v" .) -}}
+        {{- if ne $val "" }}{{ $backgroundLight = $val }}{{ end -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if eq $backgroundLight "" }}
+      {{- if ne $backgroundSingle "" }}
+        {{- $backgroundLight = $backgroundSingle -}}
+      {{- else -}}
+        {{- $backgroundLight = printf "linear-gradient(135deg,%s 0%%,#0f172a 100%%)" $accentLight -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- $backgroundDark := "" -}}
+    {{- with index $options "background_dark" }}
+      {{- $val := strings.TrimSpace (printf "%v" .) -}}
+      {{- if ne $val "" }}{{ $backgroundDark = $val }}{{ end -}}
+    {{- end -}}
+    {{- if eq $backgroundDark "" }}
+      {{- with index $options "repo_background_dark" }}
+        {{- $val := strings.TrimSpace (printf "%v" .) -}}
+        {{- if ne $val "" }}{{ $backgroundDark = $val }}{{ end -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if eq $backgroundDark "" }}
+      {{- if ne $backgroundSingle "" }}
+        {{- $backgroundDark = $backgroundSingle -}}
+      {{- else -}}
+        {{- $backgroundDark = printf "linear-gradient(135deg,%s 0%%,#020617 100%%)" $accentDark -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- $foregroundSingle := "" -}}
     {{- with index $options "foreground" }}
       {{- $val := strings.TrimSpace (printf "%v" .) -}}
-      {{- if ne $val "" }}{{ $foreground = $val }}{{ end -}}
+      {{- if ne $val "" }}{{ $foregroundSingle = $val }}{{ end -}}
+    {{- end -}}
+    {{- if eq $foregroundSingle "" }}
+      {{- with index $options "repo_foreground" }}
+        {{- $val := strings.TrimSpace (printf "%v" .) -}}
+        {{- if ne $val "" }}{{ $foregroundSingle = $val }}{{ end -}}
+      {{- end -}}
     {{- end -}}
 
+    {{- $foregroundLight := "" -}}
+    {{- with index $options "foreground_light" }}
+      {{- $val := strings.TrimSpace (printf "%v" .) -}}
+      {{- if ne $val "" }}{{ $foregroundLight = $val }}{{ end -}}
+    {{- end -}}
+    {{- if eq $foregroundLight "" }}
+      {{- with index $options "repo_foreground_light" }}
+        {{- $val := strings.TrimSpace (printf "%v" .) -}}
+        {{- if ne $val "" }}{{ $foregroundLight = $val }}{{ end -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if eq $foregroundLight "" }}
+      {{- if ne $foregroundSingle "" }}
+        {{- $foregroundLight = $foregroundSingle -}}
+      {{- else -}}
+        {{- $foregroundLight = "#F8FAFC" -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- $foregroundDark := "" -}}
+    {{- with index $options "foreground_dark" }}
+      {{- $val := strings.TrimSpace (printf "%v" .) -}}
+      {{- if ne $val "" }}{{ $foregroundDark = $val }}{{ end -}}
+    {{- end -}}
+    {{- if eq $foregroundDark "" }}
+      {{- with index $options "repo_foreground_dark" }}
+        {{- $val := strings.TrimSpace (printf "%v" .) -}}
+        {{- if ne $val "" }}{{ $foregroundDark = $val }}{{ end -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if eq $foregroundDark "" }}
+      {{- if ne $foregroundSingle "" }}
+        {{- $foregroundDark = $foregroundSingle -}}
+      {{- else -}}
+        {{- $foregroundDark = "#E2E8F0" -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- $style := printf "--gh-accent-light:%s" $accentLight -}}
+    {{- if ne $accentDark "" }}{{ $style = printf "%s;--gh-accent-dark:%s" $style $accentDark }}{{ end -}}
+    {{- $style = printf "%s;--gh-background-light:%s" $style $backgroundLight -}}
+    {{- if ne $backgroundDark "" }}{{ $style = printf "%s;--gh-background-dark:%s" $style $backgroundDark }}{{ end -}}
+    {{- $style = printf "%s;--gh-foreground-light:%s" $style $foregroundLight -}}
+    {{- if ne $foregroundDark "" }}{{ $style = printf "%s;--gh-foreground-dark:%s" $style $foregroundDark }}{{ end -}}
+    {{- $style = printf "%s;" $style | safeCSS -}}
+
+    {{- $variant := "" -}}
+    {{- with index $options "variant" }}
+      {{- $variant = strings.TrimSpace (lower (printf "%v" .)) -}}
+    {{- end -}}
+    {{- if eq $variant "" }}
+      {{- with index $options "repo_variant" }}
+        {{- $variant = strings.TrimSpace (lower (printf "%v" .)) -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if eq $variant "" }}{{ $variant = "default" }}{{ end -}}
+    {{- $isCompact := or (eq $variant "compact") (eq $variant "simple") -}}
+
     {{- $descOverride := "" -}}
-    {{- with index $options "description" }}{{ $descOverride = strings.TrimSpace (printf "%v" .) }}{{ end -}}
+    {{- $hasDescOverride := false -}}
+    {{- with index $options "description" }}
+      {{- $descOverride = strings.TrimSpace (printf "%v" .) -}}
+      {{- $hasDescOverride = true -}}
+    {{- end -}}
 
     {{- $branchOverride := "" -}}
     {{- with index $options "branch" }}{{ $branchOverride = strings.TrimSpace (printf "%v" .) }}{{ end -}}
 
-    {{- $style := printf "--gh-accent:%s;--gh-background:%s;--gh-foreground:%s;" $accent $background $foreground | safeCSS -}}
     {{- $headers := dict "Accept" "application/vnd.github+json" "User-Agent" "MERL-Hugo-Shortcode" -}}
     {{- $requestOpts := dict "headers" $headers "timeout" "5s" -}}
 
@@ -111,7 +276,9 @@
       {{- $publicRepos := index $data "public_repos" -}}
       {{- $htmlURL := printf "https://github.com/%s" $user -}}
 
-      <article class="gh-card gh-card--user" style="{{ $style }}">
+      {{- $cardClasses := "gh-card gh-card--user" -}}
+      {{- if $isCompact }}{{ $cardClasses = printf "%s %s" $cardClasses "gh-card--compact" }}{{ end -}}
+      <article class="{{ $cardClasses }}" style="{{ $style }}">
         <div class="gh-card__header">
           {{- if $avatar }}<img src="{{ $avatar }}" alt="{{ $name }} avatar" class="gh-card__avatar">{{ end -}}
           <div class="gh-card__meta">
@@ -155,7 +322,7 @@
 
       {{- $name := default $repo (index $data "name") -}}
       {{- $defaultDesc := default "" (index $data "description") -}}
-      {{- $desc := cond (ne $descOverride "") $descOverride $defaultDesc -}}
+      {{- $desc := cond $hasDescOverride $descOverride $defaultDesc -}}
       {{- $defaultBranch := default "main" (index $data "default_branch") -}}
       {{- $branch := cond (ne $branchOverride "") $branchOverride $defaultBranch -}}
       {{- $topics := default (slice) (index $data "topics") -}}
@@ -169,42 +336,70 @@
       {{- $updated := index $data "pushed_at" -}}
       {{- $htmlURL := printf "https://github.com/%s/%s" $owner $repo -}}
 
-      <article class="gh-card gh-card--repo" style="{{ $style }}">
-        <div class="gh-card__header">
-          {{- if $avatar }}<img src="{{ $avatar }}" alt="{{ $owner }} avatar" class="gh-card__avatar">{{ end -}}
-          <div class="gh-card__meta">
-            <h3 class="gh-card__title">
-              <a href="{{ $htmlURL }}">{{ $owner }}/{{ $name }}</a>
-              {{- if $hasAPI }}<span class="gh-chip">{{ $branch }} branch</span>{{ end -}}
-            </h3>
-            {{- if $desc }}<p style="margin:.45rem 0 0;font-size:.95rem;opacity:.9;">{{ $desc }}</p>{{ end -}}
-            {{- if and $hasAPI (gt (len $topics) 0) }}
-              <div class="gh-tags">
-                {{- range first 6 $topics }}<span class="gh-tag">#{{ . }}</span>{{ end -}}
-              </div>
-            {{- end -}}
-          </div>
-          <div class="gh-actions">
-            <a class="gh-button" href="{{ printf "%s/archive/refs/heads/%s.zip" $htmlURL $branch }}">
-              Download ZIP
-              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 1.5a.75.75 0 0 1 .75.75v6.19l2.72-2.72a.75.75 0 1 1 1.06 1.06l-4 4a.75.75 0 0 1-1.06 0l-4-4A.75.75 0 0 1 4.53 5.7l2.72 2.72V2.25A.75.75 0 0 1 8 1.5Zm-5 9a.75.75 0 0 1 .75.75V12a1 1 0 0 0 1 1h6.5a1 1 0 0 0 1-1v-.75a.75.75 0 0 1 1.5 0V12A2.5 2.5 0 0 1 12.25 14.5h-6.5A2.5 2.5 0 0 1 3.25 12v-.75A.75.75 0 0 1 3 10.5Z" fill="currentColor"/></svg>
-            </a>
-            <a class="gh-button gh-button--ghost" href="{{ $htmlURL }}">
+      {{- $cardClasses := "gh-card gh-card--repo" -}}
+      {{- if $isCompact }}{{ $cardClasses = printf "%s %s" $cardClasses "gh-card--compact" }}{{ end -}}
+      <article class="{{ $cardClasses }}" style="{{ $style }}">
+        {{- if $isCompact }}
+          <div class="gh-card__compact-body">
+            <div class="gh-card__meta">
+              <h3 class="gh-card__title">
+                <a href="{{ $htmlURL }}">{{ $owner }}/{{ $name }}</a>
+                {{- if $hasAPI }}<span class="gh-chip">{{ $branch }} branch</span>{{ end -}}
+              </h3>
+              {{- if $desc }}<p class="gh-card__description">{{ $desc }}</p>{{ end -}}
+            </div>
+            <a class="gh-button" href="{{ $htmlURL }}">
               View Repo
               <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.22 4.22a.75.75 0 0 1 1.06 0L9.5 8.44l-4.22 4.22a.75.75 0 0 1-1.06-1.06l3.19-3.19-3.19-3.19a.75.75 0 0 1 0-1.06Z" fill="currentColor"/></svg>
             </a>
           </div>
-        </div>
-        {{- if $hasAPI }}
-          <div class="gh-stats">
-            <span>★ {{ $stars }}</span>
-            <span>⑂ {{ $forks }}</span>
-            <span>Issues {{ $issues }}</span>
-            {{- with $homepage }}<span>Website: <a href="{{ . }}">{{ . }}</a></span>{{ end -}}
-            {{- with $updated }}<span>Updated {{ . | time | time.Format "2006-01-02" }}</span>{{ end -}}
-          </div>
+          {{- if $hasAPI }}
+            <div class="gh-stats">
+              <span>★ {{ $stars }}</span>
+              <span>⑂ {{ $forks }}</span>
+              <span>Issues {{ $issues }}</span>
+              {{- with $updated }}<span>Updated {{ . | time | time.Format "2006-01-02" }}</span>{{ end -}}
+            </div>
+          {{- else }}
+            <p class="gh-note">Live GitHub data unavailable. Showing cached repository link.</p>
+          {{- end -}}
         {{- else }}
-          <p class="gh-note">Live GitHub data unavailable. Showing cached repository link.</p>
+          <div class="gh-card__header">
+            {{- if $avatar }}<img src="{{ $avatar }}" alt="{{ $owner }} avatar" class="gh-card__avatar">{{ end -}}
+            <div class="gh-card__meta">
+              <h3 class="gh-card__title">
+                <a href="{{ $htmlURL }}">{{ $owner }}/{{ $name }}</a>
+                {{- if $hasAPI }}<span class="gh-chip">{{ $branch }} branch</span>{{ end -}}
+              </h3>
+              {{- if $desc }}<p style="margin:.45rem 0 0;font-size:.95rem;opacity:.9;">{{ $desc }}</p>{{ end -}}
+              {{- if and $hasAPI (gt (len $topics) 0) }}
+                <div class="gh-tags">
+                  {{- range first 6 $topics }}<span class="gh-tag">#{{ . }}</span>{{ end -}}
+                </div>
+              {{- end -}}
+            </div>
+            <div class="gh-actions">
+              <a class="gh-button" href="{{ printf "%s/archive/refs/heads/%s.zip" $htmlURL $branch }}">
+                Download ZIP
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 1.5a.75.75 0 0 1 .75.75v6.19l2.72-2.72a.75.75 0 1 1 1.06 1.06l-4 4a.75.75 0 0 1-1.06 0l-4-4A.75.75 0 0 1 4.53 5.7l2.72 2.72V2.25A.75.75 0 0 1 8 1.5Zm-5 9a.75.75 0 0 1 .75.75V12a1 1 0 0 0 1 1h6.5a1 1 0 0 0 1-1v-.75a.75.75 0 0 1 1.5 0V12A2.5 2.5 0 0 1 12.25 14.5h-6.5A2.5 2.5 0 0 1 3.25 12v-.75A.75.75 0 0 1 3 10.5Z" fill="currentColor"/></svg>
+              </a>
+              <a class="gh-button gh-button--ghost" href="{{ $htmlURL }}">
+                View Repo
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.22 4.22a.75.75 0 0 1 1.06 0L9.5 8.44l-4.22 4.22a.75.75 0 0 1-1.06-1.06l3.19-3.19-3.19-3.19a.75.75 0 0 1 0-1.06Z" fill="currentColor"/></svg>
+              </a>
+            </div>
+          </div>
+          {{- if $hasAPI }}
+            <div class="gh-stats">
+              <span>★ {{ $stars }}</span>
+              <span>⑂ {{ $forks }}</span>
+              <span>Issues {{ $issues }}</span>
+              {{- with $homepage }}<span>Website: <a href="{{ . }}">{{ . }}</a></span>{{ end -}}
+              {{- with $updated }}<span>Updated {{ . | time | time.Format "2006-01-02" }}</span>{{ end -}}
+            </div>
+          {{- else }}
+            <p class="gh-note">Live GitHub data unavailable. Showing cached repository link.</p>
+          {{- end -}}
         {{- end -}}
       </article>
 
